@@ -9,14 +9,17 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using TodosAsp.Net.Models;
+using System.Web.Http.Cors;
 
 namespace TodosAsp.Net.Controllers
 {
-    public class TodoController : ApiController
+	[EnableCors(origins: "http://localhost:8080", headers: "*", methods: "*")]
+	public class TodoController : ApiController
     {
         private TodoContext db = new TodoContext();
 
         // GET: api/Todo
+
         public IQueryable<Todo> GetTodoes()
         {
             return db.Todoes;
@@ -77,7 +80,7 @@ namespace TodosAsp.Net.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }
+            } 
 
             db.Todoes.Add(todo);
             db.SaveChanges();

@@ -8,9 +8,9 @@ namespace TodosAsp.Net.Repository
 {
 	public interface ITodoRepository
 	{
-		IQueryable<Todo> GetAllTodos();
+		IEnumerable<Todo> GetAllTodos();
 		Todo GetById(int id);
-		void AddNew(Todo item);
+		Todo AddNew(Todo item);
 		void DeleteById(int id);
 		void EditById(int id, Todo newItem);
 	}

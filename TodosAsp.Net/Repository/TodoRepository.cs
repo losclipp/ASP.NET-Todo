@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using TodosAsp.Net.Models;
+using System.Data.Entity.Core;
 
 namespace TodosAsp.Net.Repository
 {
@@ -11,10 +12,11 @@ namespace TodosAsp.Net.Repository
 	{
 		private TodoContext _db = new TodoContext();
 
-		public void AddNew(Todo item)
+		public Todo AddNew(Todo item)
 		{
 			_db.Todoes.Add(item);
 			_db.SaveChanges();
+			return item;
 		}
 		public void DeleteById(int id)
 		{
@@ -24,10 +26,17 @@ namespace TodosAsp.Net.Repository
 		}
 		public void EditById(int id, Todo newItem)
 		{
-			_db.Entry(newItem).State = EntityState.Modified;
-			_db.SaveChanges();
+			if (_db.Todoes.Any(x => x.Id == id))
+			{
+				_db.Entry(newItem).State = EntityState.Modified;
+				_db.SaveChanges();
+			}
+			else
+			{
+				throw new ObjectNotFoundException(string.Format("There is no Todo object with Id = {0}", id));
+			};
 		}
-		public IQueryable<Todo> GetAllTodos()
+		public IEnumerable<Todo> GetAllTodos()
 		{
 			return _db.Todoes;
 		}

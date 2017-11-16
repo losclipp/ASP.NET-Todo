@@ -1,23 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using System.Web.Http.Description;
 using TodosAsp.Net.Models;
-using System.Web.Http.Cors;
-using TodosAsp.Net.Repository;
 using TodosAsp.Net.Services;
 
 namespace TodosAsp.Net.Controllers
 {
 	[EnableCors(origins: "http://localhost:8080", headers: "*", methods: "*")]
 	public class TodoController : ApiController
-    {
+	{
 		private ITodoService _service;
 
         public TodoController(ITodoService service)
@@ -28,7 +24,7 @@ namespace TodosAsp.Net.Controllers
 		// GET: api/Todo
 		public IEnumerable<Todo> GetTodoes()
         {
-            return _service.GetAll();
+			return _service.GetAll();
         }
 
         // GET: api/Todo/5
@@ -65,15 +61,16 @@ namespace TodosAsp.Net.Controllers
         [ResponseType(typeof(Todo))]
         public IHttpActionResult PostTodo([FromBody]Todo todo)
         {
-            try
+			Todo newTodo;
+			try
 			{
-				_service.Add(todo);
+				newTodo = _service.Add(todo);
 			}
 			catch (Exception ex)
 			{
 				return BadRequest(ex.Message);
 			}
-            return CreatedAtRoute("DefaultApi", new { id = todo.Id }, todo);
+            return CreatedAtRoute("DefaultApi", new { id = newTodo.Id }, newTodo);
         }
 
         // DELETE: api/Todo/5

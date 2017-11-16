@@ -8,9 +8,9 @@ namespace TodosAsp.Net.Services
 {
 	public interface ITodoService
 	{
-		IQueryable<Todo> GetAll();
+		IEnumerable<Todo> GetAll();
 		Todo GetById(int id);
-		void Add(Todo todo);
+		Todo Add(Todo todo);
 		void Edit(int id, Todo newItem);
 		void Delete(int id);
 	}

@@ -15,7 +15,7 @@ namespace TodosAsp.Net.Services
 		{
 			_repository = repository;
 		}
-		public IQueryable<Todo> GetAll()
+		public IEnumerable<Todo> GetAll()
 		{
 			try
 			{
@@ -39,14 +39,14 @@ namespace TodosAsp.Net.Services
 				throw;
 			}
 		}
-		public void Add(Todo todo)
+		public Todo Add(Todo todo)
 		{
 			if (!IsTodoValid(todo))
 				throw new ArgumentException("New Todo is not valid");
 
 			try
 			{
-				_repository.AddNew(todo);
+				return _repository.AddNew(todo);
 			}
 			catch(Exception ex)
 			{

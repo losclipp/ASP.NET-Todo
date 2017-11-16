@@ -5,6 +5,11 @@ using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Web.Http;
 using Newtonsoft.Json.Serialization;
+using Owin;
+using TodosAsp.Net.Models;
+using System.Data.Entity;
+using SimpleInjector.Integration.WebApi;
+using SimpleInjector;
 
 namespace TodosAsp.Net
 {
@@ -25,6 +30,12 @@ namespace TodosAsp.Net
 			);
 			config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
 			config.Formatters.Remove(config.Formatters.XmlFormatter);
+
+
+		}
+		public static void Configure(IAppBuilder app)
+		{
+			GlobalConfiguration.Configure(WebApiConfig.Register);
 		}
 	}
 }

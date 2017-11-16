@@ -6,7 +6,7 @@ using System.Web;
 
 namespace TodosAsp.Net.Models
 {
-	public class TodoDbInitializer : DropCreateDatabaseAlways<TodoContext> 
+	public class TodoDbInitializer : CreateDatabaseIfNotExists<TodoContext> 
 	{
 		protected override void Seed(TodoContext context)
 		{

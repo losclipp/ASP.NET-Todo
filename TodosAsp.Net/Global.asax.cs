@@ -15,6 +15,8 @@ namespace TodosAsp.Net
 	{
 		protected void Application_Start()
 		{
+
+			TodosAsp.Net.App_Start.SimpleInjectorInitializer.Initialize();
 			Database.SetInitializer(new TodoDbInitializer());
 
 			AreaRegistration.RegisterAllAreas();

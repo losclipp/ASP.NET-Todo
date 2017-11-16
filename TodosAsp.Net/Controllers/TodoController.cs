@@ -10,27 +10,34 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using TodosAsp.Net.Models;
 using System.Web.Http.Cors;
+using TodosAsp.Net.Repository;
+using TodosAsp.Net.Services;
 
 namespace TodosAsp.Net.Controllers
 {
 	[EnableCors(origins: "http://localhost:8080", headers: "*", methods: "*")]
 	public class TodoController : ApiController
     {
-        private TodoContext db = new TodoContext();
+		private ITodoService _service;
 
-        // GET: api/Todo
+        public TodoController(ITodoService service)
+		{
+			_service = service;
+		}
 
-        public IQueryable<Todo> GetTodoes()
+		// GET: api/Todo
+		public IEnumerable<Todo> GetTodoes()
         {
-            return db.Todoes;
+            return _service.GetAll();
         }
 
         // GET: api/Todo/5
         [ResponseType(typeof(Todo))]
         public IHttpActionResult GetTodo(int id)
         {
-            Todo todo = db.Todoes.Find(id);
-            if (todo == null)
+			var todo = _service.GetById(id);
+
+			if (todo == null)
             {
                 return NotFound();
             }
@@ -42,33 +49,14 @@ namespace TodosAsp.Net.Controllers
         [ResponseType(typeof(void))]
         public IHttpActionResult PutTodo(int id, [FromBody]Todo todo)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != todo.Id)
-            {
-                return BadRequest();
-            }
-
-            db.Entry(todo).State = EntityState.Modified;
-
             try
             {
-                db.SaveChanges();
+				_service.Edit(id, todo);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!TodoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+				return BadRequest(ex.Message);
+			}
 
             return StatusCode(HttpStatusCode.NoContent);
         }
@@ -77,14 +65,14 @@ namespace TodosAsp.Net.Controllers
         [ResponseType(typeof(Todo))]
         public IHttpActionResult PostTodo([FromBody]Todo todo)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            } 
-
-            db.Todoes.Add(todo);
-            db.SaveChanges();
-
+            try
+			{
+				_service.Add(todo);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
             return CreatedAtRoute("DefaultApi", new { id = todo.Id }, todo);
         }
 
@@ -92,30 +80,15 @@ namespace TodosAsp.Net.Controllers
         [ResponseType(typeof(Todo))]
         public IHttpActionResult DeleteTodo(int id)
         {
-            Todo todo = db.Todoes.Find(id);
-            if (todo == null)
-            {
-                return NotFound();
-            }
-
-            db.Todoes.Remove(todo);
-            db.SaveChanges();
-
-            return Ok(todo);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
-        private bool TodoExists(int id)
-        {
-            return db.Todoes.Count(e => e.Id == id) > 0;
+			try
+			{
+				_service.Delete(id);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+            return Ok(id);
         }
     }
 }
